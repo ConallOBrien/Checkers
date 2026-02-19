@@ -1,7 +1,3 @@
-# Print, user input
-# Move bot
-# Game rules
-# 🟫⚪⚫🟤🔴🔵🟠◎
 import time
 
 RED = 0
@@ -87,7 +83,7 @@ def pieceMovesBlue(i, j):
     return capture, valid
 
 
-def validFinder(board, side):
+def validFinder(board, side, previousJumpLocation):
     validMoves = []
     if side == RED:
         for piece in pieces(board, RED):
@@ -104,6 +100,9 @@ def validFinder(board, side):
 
     if any(move[0] for move in validMoves): # Only allow captures if capture possible
         validMoves = [move for move in validMoves if move[0]]
+
+    if previousJumpLocation:
+        validMoves = [move for move in validMoves if move[1] == previousJumpLocation]
 
     return validMoves
 
@@ -139,12 +138,13 @@ print("\n")
 running = True
 current_move = RED
 success = False
+previousJumpLocation = None
 
 while pieces(board, RED) and pieces(board, BLUE):
     success = True
     showBoard(board, current_move)
 
-    validMoves = validFinder(board, current_move)
+    validMoves = validFinder(board, current_move, previousJumpLocation)
 
 
 
@@ -155,6 +155,7 @@ while pieces(board, RED) and pieces(board, BLUE):
         print(move[1][0] + 1, end=", ")
         print(chr(move[2][1] + ord('a')), end="")
         print(move[2][0] + 1)
+
 
 
     try:
@@ -175,9 +176,10 @@ while pieces(board, RED) and pieces(board, BLUE):
             if (validMoves[0][0]): # Capture (if first is true, all true)
                 board[((location2[0] - location1[0]) // 2) + location1[0]][((location2[1] - location1[1]) // 2) + location1[0]] = "⚫"
 
-                if future := validFinder(board, current_move):
+                if future := validFinder(board, current_move, location2):
                     if future[0][0]:
                         success = False
+                        previousJumpLocation = location2
 
         else:
             raise Exception
@@ -194,6 +196,7 @@ while pieces(board, RED) and pieces(board, BLUE):
 
 
     if success:
+        previousJumpLocation = None
         if current_move == RED:
             current_move = BLUE
         else:
