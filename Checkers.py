@@ -4,9 +4,14 @@ RED = 0
 BLUE = 1
 BOTH = 2
 
+PLAYER_1_PIECE = "🔴"
+PLAYER_2_PIECE = "🔵"
+EMPTY_SQUARE = "⚫"
+UNREACHABLE_SQUARE = "⚪"
+
 
 def pieces(board, type):
-    target = (("🔴"),("🔵"),("🔴","🔵"))[type] # Look for red, blue or both
+    target = ((PLAYER_1_PIECE),(PLAYER_2_PIECE),(PLAYER_1_PIECE,PLAYER_2_PIECE))[type] # Look for red, blue or both
     locations = []
     for i in range(0, 8):
         for j in range(0, 8):
@@ -31,53 +36,53 @@ def showBoard(board, side=RED):
             print()
         print("h   g  f  e  d   c  b  a")
 
-def pieceMovesRed(i, j):
+def pieceMovesRed(board, i, j):
     # Both side capture, if no capture then both side single
     capture = False
     valid = []
     if i+2<=7:
         if (j - 2 >= 0):
-            if board[i + 1][j - 1] == "🔵" and board[i + 2][j - 2] == "⚫":
+            if board[i + 1][j - 1] == PLAYER_2_PIECE and board[i + 2][j - 2] == EMPTY_SQUARE:
                 capture = True
                 valid.append((i + 2, j - 2))
 
         if (j + 2 <= 7):
-            if board[i + 1][j + 1] == "🔵" and board[i + 2][j + 2] == "⚫":
+            if board[i + 1][j + 1] == PLAYER_2_PIECE and board[i + 2][j + 2] == EMPTY_SQUARE:
                 capture = True
                 valid.append((i + 2, j + 2))
     if not capture and i+1<=7:
         if (j - 1 >= 0):
-            if board[i + 1][j - 1] == "⚫":
+            if board[i + 1][j - 1] == EMPTY_SQUARE:
                 valid.append((i + 1, j - 1))
 
         if (j + 1 <= 7):
-            if board[i + 1][j + 1] == "⚫":
+            if board[i + 1][j + 1] == EMPTY_SQUARE:
                 valid.append((i + 1, j + 1))
 
     return capture, valid
 
 
-def pieceMovesBlue(i, j):
+def pieceMovesBlue(board, i, j):
     # Both side capture, if no capture then both side single
     capture = False
     valid = []
     if i-2>=0:
         if (j - 2 >= 0):
-            if board[i - 1][j - 1] == "🔴" and board[i - 2][j - 2] == "⚫":
+            if board[i - 1][j - 1] == PLAYER_1_PIECE and board[i - 2][j - 2] == EMPTY_SQUARE:
                 capture = True
                 valid.append((i - 2, j - 2))
 
         if (j + 2 <= 7):
-            if board[i - 1][j + 1] == "🔴" and board[i - 2][j + 2] == "⚫":
+            if board[i - 1][j + 1] == PLAYER_1_PIECE and board[i - 2][j + 2] == EMPTY_SQUARE:
                 capture = True
                 valid.append((i - 2, j + 2))
     if not capture and i-1>=0:
         if (j - 1 >= 0):
-            if board[i - 1][j - 1] == "⚫":
+            if board[i - 1][j - 1] == EMPTY_SQUARE:
                 valid.append((i - 1, j - 1))
 
         if (j + 1 <= 7):
-            if board[i - 1][j + 1] == "⚫":
+            if board[i - 1][j + 1] == EMPTY_SQUARE:
                 valid.append((i - 1, j + 1))
 
     return capture, valid
@@ -87,13 +92,13 @@ def validFinder(board, side, previousJumpLocation):
     validMoves = []
     if side == RED:
         for piece in pieces(board, RED):
-            a, b = pieceMovesRed(*piece)
+            a, b = pieceMovesRed(board, *piece)
             if len(b):
                 for destination in b:
                     validMoves.append((a,piece,destination))
     else:
         for piece in pieces(board, BLUE):
-            a, b = pieceMovesBlue(*piece)
+            a, b = pieceMovesBlue(board, *piece)
             if len(b):
                 for destination in b:
                     validMoves.append((a,piece,destination))
@@ -110,7 +115,7 @@ def validFinder(board, side, previousJumpLocation):
 
 
 blank_board = []
-squares = ["⚫","⚪","🔴","🔵"]
+squares = [EMPTY_SQUARE,UNREACHABLE_SQUARE,PLAYER_1_PIECE,PLAYER_2_PIECE]
 board = []
 for i in range(0, 8):
     blank_board.append([])
@@ -122,10 +127,10 @@ for i in range(0, 8):
     for j in range(0, 8):
         if i < 3:
             if not ((i+j) % 2):
-                board[i][j] = "🔴"
+                board[i][j] = PLAYER_1_PIECE
         if i > 4:
             if not ((i + j) % 2):
-                board[i][j] = "🔵"
+                board[i][j] = PLAYER_2_PIECE
 
 for i in blank_board[::-1]:
     for j in i:
@@ -171,10 +176,10 @@ while pieces(board, RED) and pieces(board, BLUE):
             location2 = (int(inputMove[5]) - 1, ord(inputMove[4]) - ord('a'))
 
             board[location2[0]][location2[1]] = board[location1[0]][location1[1]]
-            board[location1[0]][location1[1]] = "⚫"
+            board[location1[0]][location1[1]] = EMPTY_SQUARE
 
             if (validMoves[0][0]): # Capture (if first is true, all true)
-                board[((location2[0] - location1[0]) // 2) + location1[0]][((location2[1] - location1[1]) // 2) + location1[0]] = "⚫"
+                board[((location2[0] - location1[0]) // 2) + location1[0]][((location2[1] - location1[1]) // 2) + location1[1]] = EMPTY_SQUARE
 
                 if future := validFinder(board, current_move, location2):
                     if future[0][0]:
