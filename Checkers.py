@@ -9,7 +9,6 @@ PLAYER_2_PIECE = "🔵"
 EMPTY_SQUARE = "⚫"
 UNREACHABLE_SQUARE = "⚪"
 
-
 def pieces(board, type):
     target = ((PLAYER_1_PIECE),(PLAYER_2_PIECE),(PLAYER_1_PIECE,PLAYER_2_PIECE))[type] # Look for red, blue or both
     locations = []
