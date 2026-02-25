@@ -1,4 +1,5 @@
-from piece import Piece, RED, BLUE
+from constants import RED, BLUE, BOARDWIDTH, BOARDHEIGHT
+from piece import Piece
 
 class Board():
     def __init__(self):
@@ -19,7 +20,8 @@ class Board():
         return self.grid[row][col]
 
 
-    def move_piece(self, original, destination, piece):
+    def move_piece(self, original, destination):
+        piece = self.get_piece(*original)
         self.grid[destination[0]][destination[1]] = piece
         self.remove_piece(*original)
 
@@ -35,7 +37,7 @@ class Board():
 
 
     def in_bounds(self, row, col):
-        return (0 <= row < 8) and (0 <= col < 8)
+        return (0 <= row < BOARDWIDTH) and (0 <= col < BOARDHEIGHT)
 
     def get_all_pieces(self, colour):
         pieces = []

@@ -1,5 +1,4 @@
-RED = 0
-BLUE = 1
+from constants import RED, BLUE
 
 
 class Piece:
