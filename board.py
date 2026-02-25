@@ -46,3 +46,9 @@ class Board():
                     pieces.append((i,j, piece_at_location))
 
         return pieces
+
+    def get_piece_colour(self, row, col):
+        if self.get_piece(row, col) is not None:
+            return self.get_piece(row, col).colour
+        else:
+            return None
