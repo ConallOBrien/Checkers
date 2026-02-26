@@ -1,6 +1,6 @@
 class Piece:
     def __init__(self, colour):
-        self.colour = colour        # RED or BLUE
+        self.colour = colour        # PLAYER_1 or PLAYER_2
         self.is_king = False    # True if piece is a king
 
 

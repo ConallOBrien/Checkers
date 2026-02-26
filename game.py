@@ -1,8 +1,8 @@
-from constants import RED, BLUE
+from constants import PLAYER_1, PLAYER_2
 from board import Board
 
 class Game:
-    def __init__(self, starting_player = RED):
+    def __init__(self, starting_player = PLAYER_1):
         self.board = Board()
         self.current_player = starting_player
         self.previous_jump = None
@@ -38,6 +38,7 @@ class Game:
         if any((move[1] == start and move[2] == end) for move in available_moves):
             self.apply_move(start, end)
             if abs(start[0]-end[0]) == 2:
+                self.previous_jump = end
                 if self.check_for_double() is not None:
                     self.previous_jump = end
                     return True
@@ -58,20 +59,20 @@ class Game:
 
     def switch_turn(self):
         self.previous_jump = None
-        if self.current_player == RED:
-            self.current_player = BLUE
+        if self.current_player == PLAYER_1:
+            self.current_player = PLAYER_2
         else:
-            self.current_player = RED
+            self.current_player = PLAYER_1
 
     def valid_position(self, row, col):
         return self.board.in_bounds(row, col)
 
 
     def check_win_condition(self):
-        if len(self.board.get_all_pieces(RED)) == 0 or len(self.generate_moves(RED)) == 0:
-            return BLUE
-        elif len(self.board.get_all_pieces(BLUE)) == 0 or len(self.generate_moves(BLUE)) == 0:
-            return RED
+        if len(self.board.get_all_pieces(PLAYER_1)) == 0 or len(self.generate_moves(PLAYER_1)) == 0:
+            return PLAYER_2
+        elif len(self.board.get_all_pieces(PLAYER_2)) == 0 or len(self.generate_moves(PLAYER_2)) == 0:
+            return PLAYER_1
         return None
 
     def check_for_double(self):
@@ -81,3 +82,20 @@ class Game:
             return possible_moves[1]
         return None
 
+    def player_piece_at(self, row, col):
+        piece = self.board.get_piece(row, col)
+        if piece is None:
+            return False
+        return piece.colour == self.current_player
+
+    def find_all_piece_details(self):
+        all_piece_details = []
+        p1_pieces = self.board.get_all_pieces(PLAYER_1)
+        p2_pieces = self.board.get_all_pieces(PLAYER_2)
+        for returned in p1_pieces + p2_pieces:
+            colour = returned[2].colour
+            is_king = returned[2].is_king
+            location = (returned[0], returned[1])
+            all_piece_details.append((colour, is_king, location))
+
+        return all_piece_details

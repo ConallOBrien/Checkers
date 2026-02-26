@@ -1,20 +1,20 @@
-from constants import RED, BLUE, BOARD_WIDTH, BOARD_HEIGHT
+from constants import PLAYER_1, PLAYER_2, BOARD_WIDTH, BOARD_HEIGHT
 from piece import Piece
 
 class Board:
     def __init__(self):
-        self.grid: list[list[Piece | None]] = [[None for _ in range(8)] for _ in range(8)]
+        self.grid: list[list[Piece | None]] = [[None for _ in range(BOARD_WIDTH)] for _ in range(BOARD_HEIGHT)]
         self.setup_board()
 
     def setup_board(self):
-        for i in range(0, 8):
-            for j in range(0, 8):
+        for i in range(BOARD_HEIGHT):
+            for j in range(BOARD_WIDTH):
                 if i < 3:
                     if not ((i+j) % 2):
-                        self.grid[i][j] = Piece(RED)
+                        self.grid[i][j] = Piece(PLAYER_1)
                 if i > 4:
                     if not ((i + j) % 2):
-                        self.grid[i][j] = Piece(BLUE)
+                        self.grid[i][j] = Piece(PLAYER_2)
 
     def get_piece(self, row, col):
         return self.grid[row][col]
