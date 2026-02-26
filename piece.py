@@ -1,6 +1,3 @@
-from constants import RED, BLUE
-
-
 class Piece:
     def __init__(self, colour):
         self.colour = colour        # RED or BLUE
@@ -44,7 +41,7 @@ class Piece:
 
         return capture, valid
 
-    def promote_if_needed(self, row, column = None):
+    def promote_if_needed(self, row):
         if row == 7 - (7*self.colour):
             self.is_king = True
         return

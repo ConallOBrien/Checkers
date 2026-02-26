@@ -1,10 +1,10 @@
-from constants import RED, BLUE, BOARDWIDTH, BOARDHEIGHT
+from constants import RED, BLUE, BOARD_WIDTH, BOARD_HEIGHT
 
 PLAYER_1_PIECE = "🔴"
 PLAYER_2_PIECE = "🔵"
 EMPTY_SQUARE = "⚫"
 
-class UserInterface():
+class UserInterface:
     def __init__(self, game):
         self.game = game
 
@@ -15,21 +15,21 @@ class UserInterface():
             direction = -1
         else:
             direction = 1
-        indexes = (0, 1, 2, 3, 4, 5, 6, 7)
-        for i in indexes[::direction]:
-            for j in indexes[:: -direction]:
+        for i in range(BOARD_HEIGHT)[::direction]:
+            for j in range(BOARD_WIDTH)[::-direction]:
                 self.show_square(board, i, j)
             print()
 
         print(("a   b  c  d  e   f  g  h", "h   g  f  e  d   c  b  a")[side])
 
 
-    def show_square(self, board, row, col):
+    @staticmethod
+    def show_square(board, row, col):
         if board.get_piece_colour(row, col) is None:
             print(EMPTY_SQUARE, end=" ")
-        elif (board.get_piece_colour(row, col) == RED):
+        elif board.get_piece_colour(row, col) == RED:
             print(PLAYER_1_PIECE, end=" ")
-        elif (board.get_piece_colour(row, col) == BLUE):
+        elif board.get_piece_colour(row, col) == BLUE:
             print(PLAYER_2_PIECE, end=" ")
 
 
@@ -37,9 +37,9 @@ class UserInterface():
         self.show_board()
         while self.game.check_win_condition() is None:
             try:
-                inputMove = input("Enter your move: ")
-                location1 = (int(inputMove[1]) - 1, ord(inputMove[0]) - ord('a'))
-                location2 = (int(inputMove[5]) - 1, ord(inputMove[4]) - ord('a'))
+                input_move = input("Enter your move: ")
+                location1 = (int(input_move[1]) - 1, ord(input_move[0]) - ord('a'))
+                location2 = (int(input_move[5]) - 1, ord(input_move[4]) - ord('a'))
 
                 print(location1, location2)
                 if not self.game.valid_position(*location1) or not self.game.valid_position(*location2):

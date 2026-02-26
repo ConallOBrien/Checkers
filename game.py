@@ -14,16 +14,18 @@ class Game:
 
         if self.previous_jump is not None:
             second_jumps = self.check_for_double()
-            moves.append(second_jumps)
+            for jump in second_jumps:
+                moves.append((True, self.previous_jump, jump))
 
         else:
             player_pieces = self.board.get_all_pieces(colour)
             for piece in player_pieces:
                 location = (piece[0], piece[1])
                 current_piece = piece[2]
-                current_moves = current_piece.get_valid_moves(self.board, location)
-                if len(current_moves[1]):
-                    moves.append(current_moves)
+                capture, destinations = current_piece.get_valid_moves(self.board, location)
+                if len(destinations) != 0:
+                    for destination in destinations:
+                        moves.append((capture, location, destination))
 
 
             if any(move[0] for move in moves):  # Only allow captures if capture possible
@@ -32,8 +34,8 @@ class Game:
         return moves
 
     def handle_move(self, start, end):
-        avalable_moves = self.generate_moves()
-        if any((move[1] == start and move[2] == end) for move in avalable_moves):
+        available_moves = self.generate_moves()
+        if any((move[1] == start and move[2] == end) for move in available_moves):
             self.apply_move(start, end)
             if abs(start[0]-end[0]) == 2:
                 if self.check_for_double() is not None:
@@ -76,6 +78,6 @@ class Game:
         previous_piece = self.board.get_piece(*self.previous_jump)
         possible_moves = previous_piece.get_valid_moves(self.board, self.previous_jump)
         if len(possible_moves[1]) and possible_moves[0]:  # Check for available captures from piece that jumped
-            return possible_moves
+            return possible_moves[1]
         return None
 

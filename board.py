@@ -1,9 +1,9 @@
-from constants import RED, BLUE, BOARDWIDTH, BOARDHEIGHT
+from constants import RED, BLUE, BOARD_WIDTH, BOARD_HEIGHT
 from piece import Piece
 
-class Board():
+class Board:
     def __init__(self):
-        self.grid = [[None for square in range(8)] for column in range(8)]
+        self.grid: list[list[Piece | None]] = [[None for _ in range(8)] for _ in range(8)]
         self.setup_board()
 
     def setup_board(self):
@@ -30,14 +30,15 @@ class Board():
             capture_col = (original[1] + destination[1]) // 2
             self.remove_piece(capture_row, capture_col)
 
-        piece.promote_if_needed(*destination)
+        piece.promote_if_needed(destination[0])
 
     def remove_piece(self, row, col):
         self.grid[row][col] = None
 
 
-    def in_bounds(self, row, col):
-        return (0 <= row < BOARDWIDTH) and (0 <= col < BOARDHEIGHT)
+    @staticmethod
+    def in_bounds(row, col):
+        return (0 <= row < BOARD_WIDTH) and (0 <= col < BOARD_HEIGHT)
 
     def get_all_pieces(self, colour):
         pieces = []
