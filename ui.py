@@ -41,15 +41,12 @@ class UserInterface:
                 location1 = (int(input_move[1]) - 1, ord(input_move[0]) - ord('a'))
                 location2 = (int(input_move[5]) - 1, ord(input_move[4]) - ord('a'))
 
-                print(location1, location2)
                 if not self.game.valid_position(*location1) or not self.game.valid_position(*location2):
-                    print("Error 1")
                     raise Exception
 
 
                 outcome = self.game.handle_move(location1, location2)
                 if not outcome:
-                    print("Error 2")
                     raise Exception
 
 
