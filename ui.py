@@ -27,31 +27,6 @@ class UserInterface:
         self.calculate_borders()
         self.current_selection = None
         self.running = True
-        self.show_board()
-
-    def show_board(self):
-        board = self.game.board
-        side = self.game.current_player
-        if side == PLAYER_1:
-            direction = -1
-        else:
-            direction = 1
-        for i in range(BOARD_HEIGHT)[::direction]:
-            for j in range(BOARD_WIDTH)[::-direction]:
-                self.show_square(board, i, j)
-            print()
-
-        print(("a   b  c  d  e   f  g  h", "h   g  f  e  d   c  b  a")[side])
-
-
-    @staticmethod
-    def show_square(board, row, col):
-        if board.get_piece_colour(row, col) is None:
-            print(EMPTY_SQUARE, end=" ")
-        elif board.get_piece_colour(row, col) == PLAYER_1:
-            print(PLAYER_1_PIECE, end=" ")
-        elif board.get_piece_colour(row, col) == PLAYER_2:
-            print(PLAYER_2_PIECE, end=" ")
 
     def draw_board(self):
         self.screen.fill((20, 80, 10))
@@ -77,31 +52,10 @@ class UserInterface:
 
 
     def run(self):
-        """
-        self.show_board()
-        while self.game.check_win_condition() is None:
-            try:
-                input_move = input("Enter your move: ")
-                location1 = (int(input_move[1]) - 1, ord(input_move[0]) - ord('a'))
-                location2 = (int(input_move[5]) - 1, ord(input_move[4]) - ord('a'))
-
-                if not self.game.valid_position(*location1) or not self.game.valid_position(*location2):
-                    raise Exception
-
-
-                outcome = self.game.handle_move(location1, location2)
-                if not outcome:
-                    raise Exception
-
-
-                self.show_board()
-
-            except:
-                print("Invalid move")
-        """
-
         while self.game.check_win_condition() is None and self.running == True:
             self.event_handler()
+            if not self.running:
+                break
             self.draw_board()
             pygame.display.flip()
             self.clock.tick(30)
@@ -163,7 +117,6 @@ class UserInterface:
         x_position = (position[0] - self.x_offset) // SQUARE_SIZE
         y_position = (position[1] - self.y_offset) // SQUARE_SIZE
         y_position = BOARD_HEIGHT - 1 - y_position
-        print(y_position, x_position )
         return y_position, x_position
 
     def valid_piece_location(self, square):
