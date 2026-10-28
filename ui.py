@@ -1,3 +1,5 @@
+import ai.minmax as minmax
+from time import time, sleep
 from constants import *
 import pygame
 
@@ -28,6 +30,8 @@ class UserInterface:
         self.current_selection = None
         self.running = True
 
+
+
     def draw_board(self):
         self.screen.fill((20, 80, 10))
         self.screen.blit(self.blank_board_surface, (self.x_offset, self.y_offset))
@@ -52,6 +56,7 @@ class UserInterface:
 
 
     def run(self):
+        self.game_menu()
         while self.game.check_win_condition() is None and self.running == True:
             self.event_handler()
             if not self.running:
@@ -59,6 +64,66 @@ class UserInterface:
             self.draw_board()
             pygame.display.flip()
             self.clock.tick(30)
+
+    def single_player_run(self):
+        user_player = PLAYER_1
+        while self.game.check_win_condition() is None and self.running == True:
+            if self.game.current_player == user_player:
+                self.event_handler()
+            else:
+                depth = 1
+                max_depth = 12
+                start_time = time()
+                cpu_move = None
+                while (depth <= max_depth and time() - start_time < 8):
+                    if pygame.event.peek(pygame.QUIT):
+                        pygame.quit()
+                        self.running = False
+                        break
+
+                    cpu_move = minmax.find_move(self.game, depth, True, -102, 102, cpu_move)
+                    depth += 1
+
+                if self.running:
+                    self.game.handle_move(cpu_move[1][1], cpu_move[1][2])
+            if not self.running:
+                break
+            self.draw_board()
+            pygame.display.flip()
+            self.clock.tick(30)
+
+
+    def cpu_battle(self):
+        self.draw_board()
+        pygame.display.flip()
+        self.clock.tick(30)
+        while self.game.check_win_condition() is None and self.running == True:
+            sleep(0.5)
+            minmax.cpu_side = self.game.current_player
+            depth = 5
+            max_depth = 5
+            start_time = time()
+            cpu_move = None
+            while (depth <= max_depth ): # and time() - start_time < 2 + self.game.current_player * 2
+                if self.close_check():
+                    break
+                cpu_move = minmax.find_move(self.game, depth - 3*self.game.current_player, True, previous_best=cpu_move, basic_value = 1, king_value = 2+1*self.game.current_player)
+                depth += 1
+
+            if not self.running:
+                break
+
+            self.game.handle_move(cpu_move[1][1], cpu_move[1][2])
+
+            self.draw_board()
+            pygame.display.flip()
+            self.clock.tick(30)
+
+        if self.game.check_win_condition() == PLAYER_1:
+            print("Player 1 wins!")
+        elif self.game.check_win_condition() == PLAYER_2:
+            print("Player 2 wins!")
+
 
     def load_surfaces(self):
         self.p1_piece_surface = pygame.Surface((SQUARE_SIZE, SQUARE_SIZE), pygame.SRCALPHA)
@@ -121,3 +186,25 @@ class UserInterface:
 
     def valid_piece_location(self, square):
         return self.game.player_piece_at(*square)
+
+    def game_menu(self):
+        while self.running == True:
+            break
+
+    def menu_event_handler(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                self.running = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+
+    def close_check(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                self.running = False
+                return True
+        return False
+

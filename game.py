@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from constants import PLAYER_1, PLAYER_2
 from board import Board
 
@@ -99,3 +101,6 @@ class Game:
             all_piece_details.append((colour, is_king, location))
 
         return all_piece_details
+
+    def copy(self):
+        return deepcopy(self)
